@@ -72,7 +72,26 @@ export const errorConfig: RequestConfig = {
       } else if (error.response) {
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
-        message.error(`Response status:${error.response.status}`);
+        switch (error.response?.status) {
+          case 400:
+            message.error(error.response.data.errorMessage);
+            break;
+          case 401:
+            message.error('登录失效，请重新登录！');
+            break;
+          case 403:
+            message.error('没有权限访问该页面！');
+            break;
+          case 404:
+            message.error('页面不存在！');
+            break;
+          case 500:
+            message.error('服务器内部错误！');
+            break;
+          default:
+            message.error(`Response status:${error.response?.status}`);
+            break;
+        }
       } else if (error.request) {
         // 请求已经成功发起，但没有收到响应
         // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
@@ -89,7 +108,15 @@ export const errorConfig: RequestConfig = {
   requestInterceptors: [
     (config: RequestOptions) => {
       // 拦截请求配置，进行个性化处理。
-      const url = config?.url?.concat('?token = 123');
+      // const url = config?.url?.concat('?token = 123');
+      const url = config?.url;
+      const token = localStorage.getItem('token');
+      if (token && token !== '') {
+        config.headers = {
+          ...config?.headers,
+          Authorization: `Bearer ${token}`,
+        };
+      }
       return { ...config, url };
     },
   ],
