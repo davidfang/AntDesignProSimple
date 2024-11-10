@@ -6,8 +6,29 @@ import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
+import { currentUser as queryCurrentUser, currentMenu as queryCurrentMenu } from '@/services/ant-design-pro/api';
 import React from 'react';
+
+import type { MenuDataItem as APIMenuDataItem } from '@ant-design/pro-layout';
+import * as AllIcons from '@ant-design/icons';
+
+// Fix从后端接口获取的菜单数据时，icon 类型不匹配的问题
+const fixMenuItemIcon = (menuData: APIMenuDataItem[], iconType:string ='Outlined') =>   {
+    menuData.forEach((item) => {
+      const {icon,children} = item;
+       if (typeof icon === 'string') {
+          const  fixIconName = `${item.icon}${iconType}`;
+          item.icon = React.createElement(AllIcons[fixIconName]|| AllIcons[item.icon] ||AllIcons.SmileOutlined);
+
+       }
+       if(item.children){
+           fixMenuItemIcon(item.children, iconType);
+       }
+  });
+  return menuData;
+};
+
+
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
@@ -19,6 +40,8 @@ export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser;
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  menuData?: API.MenuDataItem[];
+  fetchMenuData?: () => Promise<API.MenuDataItem[] | undefined>;
 }> {
   const fetchUserInfo = async () => {
     try {
@@ -31,6 +54,16 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
+  const fetchMenuData = async () => {
+    try {
+      const msg = await queryCurrentMenu({});
+      return msg.data;
+    } catch (error) {
+      history.push(loginPath);
+      return undefined;
+
+    }
+  };
   // 如果不是登录页面，执行
   const { location } = history;
   if (location.pathname !== loginPath) {
@@ -38,11 +71,13 @@ export async function getInitialState(): Promise<{
     return {
       fetchUserInfo,
       currentUser,
+      fetchMenuData,
       settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
   return {
     fetchUserInfo,
+    fetchMenuData,
     settings: defaultSettings as Partial<LayoutSettings>,
   };
 }
@@ -91,13 +126,35 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-        ]
+        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined />
+          <span>OpenAPI 文档</span>
+        </Link>,
+      ]
       : [],
     menuHeaderRender: undefined,
+    menuDataRender: (menuData:APIMenuDataItem[] ) =>     fixMenuItemIcon(menuData),
+    // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
+    menu: {
+      locale: false,
+      params: {
+        userId: initialState?.currentUser?.id,
+      },
+      request: async (params, defaultMenuData) => {
+        // initialState.currentUser 中包含了所有用户信息
+        if (initialState?.menuData) {
+          return initialState?.menuData;
+        }
+        const menuData = await initialState?.fetchMenuData?.();
+        if (menuData) {
+          return [...menuData, ...defaultMenuData];
+        }
+        if (!menuData && !initialState?.currentUser) {
+          // history.push(loginPath);
+        }
+        return defaultMenuData || [];
+      },
+    },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态

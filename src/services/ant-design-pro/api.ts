@@ -1,6 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
+import { ResponseStructure } from '@/requestErrorConfig';
 
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
@@ -11,7 +12,13 @@ export async function currentUser(options?: { [key: string]: any }) {
     ...(options || {}),
   });
 }
-
+/** 获取当前用户的菜单 GET /api/admin/currentMenu */
+export async function currentMenu(options?: { [key: string]: any }) {
+  return request<ResponseStructure<API.MenuDataItem[]>>('/api/menu/subTree/0', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
 /** 退出登录接口 POST /api/login/outLogin */
 export async function outLogin(options?: { [key: string]: any }) {
   return;

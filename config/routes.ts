@@ -24,13 +24,13 @@ export default [
   },
   {
     path: '/welcome',
-    name: 'welcome',
+    name: '欢迎页面',
     icon: 'smile',
     component: './Welcome',
   },
   {
     path: '/admin',
-    name: 'admin',
+    name: '管理页面',
     icon: 'crown',
     access: 'canAdmin',
     routes: [
@@ -40,13 +40,13 @@ export default [
       },
       {
         path: '/admin/sub-page',
-        name: 'sub-page',
+        name: '二级子页面',
         component: './Admin',
       },
     ],
   },
   {
-    name: 'list.table-list',
+    name: '表格列表',
     icon: 'table',
     path: '/list',
     component: './TableList',

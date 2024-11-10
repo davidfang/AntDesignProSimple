@@ -5,7 +5,7 @@ declare namespace API {
   type CurrentUser = {
     name?: string;
     avatar?: string;
-    userid?: string;
+    id?: string;
     email?: string;
     signature?: string;
     title?: string;
@@ -102,4 +102,35 @@ declare namespace API {
     description?: string;
     type?: NoticeIconItemType;
   };
+  interface MenuDataItem {
+    authority?: string[] | string;
+    children?: MenuDataItem[];
+    hideChildrenInMenu?: boolean;
+    hideInMenu?: boolean;
+    icon?: React.ReactNode;
+    locale?: string | false;
+    name?: string;
+    key?: string;
+    path?: string;
+    [key: string]: any;
+    parentKeys?: string[];
+  }
+  type MenuItem = {
+    path: string;                // 路径
+    component: string;           // 组件
+    name: string;                // 菜单的名称或国际化 key
+    icon?: string;               // 图标名称
+    access?: string;             // 权限标识
+    hideChildrenInMenu?: boolean; // 是否隐藏子菜单
+    routes?: MenuItem[];         // 子菜单项
+    hideInMenu?: boolean;        // 是否在菜单中隐藏
+    hideInBreadcrumb?: boolean;  // 是否在面包屑中隐藏
+    headerRender?: boolean;      // 是否展示顶栏
+    footerRender?: boolean;      // 是否展示页脚
+    menuRender?: boolean;        // 是否展示菜单
+    menuHeaderRender?: boolean;  // 是否展示菜单顶栏
+    parentKeys?: string[];       // 父节点 key
+    flatMenu?: boolean;          // 子项上提，不展示父菜单
+  };
+
 }

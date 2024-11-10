@@ -11,7 +11,7 @@ enum ErrorShowType {
   REDIRECT = 9,
 }
 // 与后端约定的响应数据格式
-interface ResponseStructure<T> {
+export interface ResponseStructure<T> {
   success: boolean;
   data?: T;
   errorCode?: number;
