@@ -133,27 +133,27 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       ]
       : [],
     menuHeaderRender: undefined,
-    menuDataRender: (menuData:APIMenuDataItem[] ) =>     fixMenuItemIcon(menuData),
+    // menuDataRender: (menuData:APIMenuDataItem[] ) =>     fixMenuItemIcon(menuData),
     // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
     menu: {
       locale: false,
-      params: {
-        userId: initialState?.currentUser?.id,
-      },
-      request: async (params, defaultMenuData) => {
-        // initialState.currentUser 中包含了所有用户信息
-        if (initialState?.menuData) {
-          return initialState?.menuData;
-        }
-        const menuData = await initialState?.fetchMenuData?.();
-        if (menuData) {
-          return [...menuData, ...defaultMenuData];
-        }
-        if (!menuData && !initialState?.currentUser) {
-          // history.push(loginPath);
-        }
-        return defaultMenuData || [];
-      },
+      // params: {
+      //   userId: initialState?.currentUser?.id,
+      // },
+      // request: async (params, defaultMenuData) => {
+      //   // initialState.currentUser 中包含了所有用户信息
+      //   if (initialState?.menuData) {
+      //     return initialState?.menuData;
+      //   }
+      //   const menuData = await initialState?.fetchMenuData?.();
+      //   if (menuData) {
+      //     return [...menuData, ...defaultMenuData];
+      //   }
+      //   if (!menuData && !initialState?.currentUser) {
+      //     // history.push(loginPath);
+      //   }
+      //   return defaultMenuData || [];
+      // },
     },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,

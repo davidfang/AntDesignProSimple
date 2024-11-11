@@ -32,7 +32,7 @@ export default [
     path: '/admin',
     name: '管理页面',
     icon: 'crown',
-    access: 'canAdmin',
+    // access: 'canAdmin',
     routes: [
       {
         path: '/admin',
@@ -54,6 +54,12 @@ export default [
   {
     path: '/',
     redirect: '/welcome',
+  },
+  {
+    path: '/menu',
+    name: '菜单页面',
+    icon: 'smile',
+    component: './Menu/index',
   },
   {
     path: '*',
